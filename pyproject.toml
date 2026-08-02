@@ -4,4 +4,10 @@ version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
     "django>=6.0.7",
+    "django-environ>=0.14.0",
+    "django-filter>=26.1",
+    "djangorestframework>=3.17.1",
+    "djangorestframework-simplejwt>=5.5.1",
+    "psycopg2>=2.9.12",
+    "python-dotenv>=1.2.2",
 ]
