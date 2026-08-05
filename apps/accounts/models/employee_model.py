@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Employee(BaseModel):
-    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='employments')
+    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, related_name='employments')
     position = models.CharField(max_length=100, blank=True)
 
     hired_at = models.DateTimeField(auto_now_add=True)
