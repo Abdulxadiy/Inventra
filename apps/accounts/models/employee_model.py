@@ -26,3 +26,13 @@ class Employee(models.Model):
         blank=True, related_name='fired_employees'
     )
 
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user'],
+                condition=models.Q(is_active=True),
+                name='unique_employment_per_user',
+            )
+        ]
+
