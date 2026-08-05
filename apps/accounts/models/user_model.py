@@ -12,7 +12,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ]
 
     phone_number = models.CharField(max_length=15, unique=True)
-    username = models.CharField(max_length=30, unique=True, null=True, blank=True)
+    username = models.CharField(max_length=100, unique=True, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
 
     first_name = models.CharField(max_length=50, null=True, blank=True)
@@ -21,7 +21,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     tenant = models.ForeignKey(
         'tenants.Tenant', on_delete=models.CASCADE,
-        null=True, blank=True, related_name='user'
+        null=True, blank=True, related_name='users'
     )
     role = models.CharField(
         max_length=20, choices=ROLE_CHOICES,
@@ -37,6 +37,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['username', 'phone_number']),
+        ]
 
     def __str__(self):
         return self.username or self.phone_number
