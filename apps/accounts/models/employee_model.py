@@ -1,10 +1,11 @@
 from django.contrib.auth.models import Permission
+from django.contrib.auth import get_user_model
 from apps.core.models import BaseModel
 from django.db import models
-
+User = get_user_model()
 
 class Employee(BaseModel):
-    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, related_name='employments')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employments')
     position = models.CharField(max_length=100, blank=True)
 
     hired_at = models.DateTimeField(auto_now_add=True)
