@@ -11,13 +11,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('platform_admin', "Platforma administratori"),
     ]
 
-    phone_number = models.CharField(max_length=15, unique=True)
-    username = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=False, blank=False)
+    username = models.CharField(max_length=100, unique=True, null=True, blank=True, db_index=True)
     email = models.EmailField(null=True, blank=True)
 
-    first_name = models.CharField(max_length=50, null=True, blank=True)
-    last_name = models.CharField(max_length=50, null=True, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
+    first_name = models.CharField(max_length=50, blank=True)
+    last_name = models.CharField(max_length=50, blank=True)
+    date_of_birth = models.DateField(blank=True)
 
     tenant = models.ForeignKey(
         'tenants.Tenant', on_delete=models.CASCADE,
@@ -40,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         indexes = [
-            models.Index(fields=['username', 'phone_number']),
+            models.Index(fields=['tenant', 'role']),
         ]
 
     def __str__(self):
