@@ -5,7 +5,7 @@ from django.db import models
 User = get_user_model()
 
 class Employee(BaseModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='employments')
     position = models.CharField(max_length=100, blank=True)
 
     hired_at = models.DateTimeField(auto_now_add=True)
