@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.tenants',
     'apps.accounts',
+    'apps.tg_bot',
 ]
 
 MIDDLEWARE = [
