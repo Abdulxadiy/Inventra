@@ -11,4 +11,6 @@ dependencies = [
     "djangorestframework-stubs>=3.17.1",
     "psycopg2>=2.9.12",
     "python-dotenv>=1.2.2",
+    "redis>=8.1.0",
+    "requests>=2.34.2",
 ]
