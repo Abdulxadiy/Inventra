@@ -1,3 +1,15 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import responses, Response
+from rest_framework import status
+from .serializers import TelegramContactSerializer
+from .permissions import IsInternalService
 
-# Create your views here.
+
+class RegisterTelegramContactView(APIView):
+    permission_classes = [IsInternalService]
+
+    def post(self, request):
+        serializer = TelegramContactSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)

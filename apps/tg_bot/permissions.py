@@ -3,7 +3,7 @@ from django.conf import settings
 import secrets
 
 
-class isInternalService(BasePermission):
+class IsInternalService(BasePermission):
     """Allow only tokens came from an internal service.
     Header: Authorization: Internal <token>"""
 
