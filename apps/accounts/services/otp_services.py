@@ -42,7 +42,7 @@ def verify_code(phone_number: str, code: str) -> tuple[bool, str]:
     if stored_code != code:
         return False, 'Invalid code'
 
-    # We should delete after verify because one code for only one time
+    # We should delete the code after verify because one code for only one time
     redis_client.delete(_otp_key(phone_number))
     redis_client.delete(attempts_key)
     return True, ''
