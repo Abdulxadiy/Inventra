@@ -46,3 +46,29 @@ class RequestOTPView(APIView):
                 status=status.HTTP_502_BAD_GATEWAY
             )
         return Response(status=status.HTTP_200_OK)
+
+
+class VerifyOTPView(APIView):
+    def post(self, request):
+        serializer = VerifyOTPSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        phone_number = serializer.validated_data['phone_number']
+        code = serializer.validated_data['code']
+
+        is_valid, error_reason = otp_services.verify_code(phone_number, code)
+
+        if not is_valid:
+            return Response(
+                {'error': error_reason},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = User.objects.get(phone_number=phone_number)
+        refresh = RefreshToken.for_user(user)
+
+        return Response(
+            {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            },    
+            status=status.HTTP_200_OK)
