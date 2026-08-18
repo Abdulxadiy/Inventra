@@ -1,8 +1,13 @@
 from django.urls import path
-from .views import RequestOTPView, VerifyOTPView
+from .views import (
+RegisterRequestOTPView, RegisterVerifyOTPView, LoginRequestOTPView, LoginVerifyOTPView, CompleteProfileVIew)
 
 
 urlpatterns = [
-    path('auth/otp/request', RequestOTPView.as_view(), name='otp-request'),
-    path('auth/otp/verify', VerifyOTPView.as_view(), name='otp-verify'),
+    path('auth/register/request-otp/', RegisterRequestOTPView.as_view(), name='register-request-otp'),
+    path('auth/register/verify-otp/', RegisterVerifyOTPView.as_view(), name='register-verify-otp'),
+    path('auth/login/request-otp/', LoginRequestOTPView.as_view(), name='login-request-otp'),
+    path('auth/login/verify-otp/', LoginVerifyOTPView.as_view(), name='login-verify-otp'),
+    path('auth/complete-profile/', CompleteProfileVIew.as_view(), name='complete-profile')
+
 ]
