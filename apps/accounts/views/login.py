@@ -1,12 +1,12 @@
 from rest_framework import status
 from rest_framework.response import Response
-from apps.accounts.models import User
+from django.contrib.auth import get_user_model
 from apps.accounts.serializers import PhoneNumberSerializer, VerifyOTPSerializer
 from rest_framework.views import APIView
-
 from apps.accounts.services import otp_services
-from apps.accounts.views.misc import get_telegram_contact_or_error, send_otp_or_error
+from apps.accounts.views.misc import get_telegram_contact_or_error, send_otp_or_error, issue_tokens
 
+User = get_user_model()
 
 class LoginRequestOTPView(APIView):
     def post(self, request):
@@ -43,3 +43,14 @@ class LoginVerifyOTPView(APIView):
         is_valid, error_reason = otp_services.verify_code(phone_number, code)
         if not is_valid:
             return Response({'error': error_reason}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(phone_number=phone_number)
+        except User.DoesNotExist:
+            return Response({'error': 'user_not_found'}, status=status.HTTP_404_NOT_FOUND)
+
+        tokens = issue_tokens(user)
+        return Response({
+            **tokens,
+            "needs_profile_completion": not user.has_usable_password(),
+        }, status=status.HTTP_200_OK)
