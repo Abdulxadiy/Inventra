@@ -1,4 +1,3 @@
-from django.contrib.auth.base_user import AbstractBaseUser
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
