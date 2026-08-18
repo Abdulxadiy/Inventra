@@ -19,13 +19,13 @@ class RegisterRequestOTPView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        contact, error_response = get_telegram_contact_or_error(phone_number)
-        if error_response:
-            return error_response
+        contact, error_reason = get_telegram_contact_or_error(phone_number)
+        if error_reason:
+            return error_reason
 
-        error_response = send_otp_or_error(phone_number, contact)
-        if error_response:
-            return error_response
+        error_reason = send_otp_or_error(phone_number, contact)
+        if error_reason:
+            return error_reason
 
         return Response(status=status.HTTP_200_OK)
 
