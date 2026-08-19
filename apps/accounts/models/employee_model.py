@@ -1,8 +1,10 @@
-from django.contrib.auth.models import Permission
+﻿from django.contrib.auth.models import Permission
 from django.contrib.auth import get_user_model
 from apps.core.models import BaseModel
 from django.db import models
+
 User = get_user_model()
+
 
 class Employee(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='employments')
@@ -34,5 +36,6 @@ class Employee(BaseModel):
         ]
 
     def __str__(self):
-        return f"{self.user.username} | {self.tenant.name} | {self.position} | ({'faol' if self.is_active else 'tugagan'})"
-
+        status = 'faol' if self.is_active else 'tugagan'
+        tenant_name = self.tenant.name if self.tenant else "tenant yo'q"
+        return f"{self.user.username or self.user.phone_number} | {tenant_name} | {self.position} | ({status})"

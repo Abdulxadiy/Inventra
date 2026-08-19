@@ -1,4 +1,4 @@
-from rest_framework import status
+﻿from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from apps.accounts.serializers import PhoneNumberSerializer, VerifyOTPSerializer
@@ -7,6 +7,7 @@ from apps.accounts.services import otp_services
 from apps.accounts.views.misc import get_telegram_contact_or_error, send_otp_or_error, issue_tokens
 
 User = get_user_model()
+
 
 class LoginRequestOTPView(APIView):
     def post(self, request):
@@ -38,7 +39,7 @@ class LoginVerifyOTPView(APIView):
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data['phone_number']
-        code = serializer.validated_data['code']
+        code = serializer.validated_data['verification_code']
 
         is_valid, error_reason = otp_services.verify_code(phone_number, code)
         if not is_valid:
@@ -52,5 +53,5 @@ class LoginVerifyOTPView(APIView):
         tokens = issue_tokens(user)
         return Response({
             **tokens,
-            "needs_profile_completion": not user.has_usable_password(),
+            'needs_profile_completion': not user.has_usable_password(),
         }, status=status.HTTP_200_OK)

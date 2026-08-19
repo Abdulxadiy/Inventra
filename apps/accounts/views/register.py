@@ -1,4 +1,4 @@
-from rest_framework import status
+﻿from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.accounts.models import User
@@ -36,7 +36,7 @@ class RegisterVerifyOTPView(APIView):
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data['phone_number']
-        code = serializer.validated_data['code']
+        code = serializer.validated_data['verification_code']
 
         if User.objects.filter(phone_number=phone_number).exists():
             return Response(
@@ -60,6 +60,5 @@ class RegisterVerifyOTPView(APIView):
         tokens = issue_tokens(user)
         return Response({
             **tokens,
-            "needs_profile_completion": True,
-        }, status=status.HTTP_201_CREATED
-        )
+            'needs_profile_completion': True,
+        }, status=status.HTTP_201_CREATED)

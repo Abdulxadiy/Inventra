@@ -1,5 +1,5 @@
-from rest_framework import serializers
-from models import TelegramContact
+﻿from rest_framework import serializers
+from .models import TelegramContact
 
 
 class TelegramContactSerializer(serializers.Serializer):
