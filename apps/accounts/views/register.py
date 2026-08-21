@@ -60,5 +60,5 @@ class RegisterVerifyOTPView(APIView):
         tokens = issue_tokens(user)
         return Response({
             **tokens,
-            'needs_profile_completion': True,
+            'needs_profile_completion': not user.profile_completed,
         }, status=status.HTTP_201_CREATED)

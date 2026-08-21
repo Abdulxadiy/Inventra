@@ -53,5 +53,5 @@ class LoginVerifyOTPView(APIView):
         tokens = issue_tokens(user)
         return Response({
             **tokens,
-            'needs_profile_completion': not user.has_usable_password(),
+            'needs_profile_completion': not user.profile_completed,
         }, status=status.HTTP_200_OK)

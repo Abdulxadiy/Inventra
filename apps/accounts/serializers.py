@@ -15,14 +15,7 @@ class VerifyOTPSerializer(serializers.Serializer):
 
 
 class CompleteProfileSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=100)
-    password = serializers.CharField(write_only=True, min_length=8)
-    first_name = serializers.CharField(max_length=100)
-    last_name = serializers.CharField(max_length=100)
-    email = serializers.EmailField(max_length=100)
+    first_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    email = serializers.EmailField(required=False, allow_blank=True)
     date_of_birth = serializers.DateField(required=False, allow_null=True)
-
-    def validate_username(self, username):
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError("Bu username band.")
-        return username
