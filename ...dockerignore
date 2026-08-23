@@ -1,0 +1,40 @@
+# --- Python venv and cache ---
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- uv / pip cache ---
+.uv_cache/
+
+# --- Git ---
+.git/
+.gitignore
+.gitattributes
+
+.env
+.env.*
+!.env.example
+
+# --- DataBase ---
+db.sqlite3
+*.sqlite3
+
+# --- IDE and editor files ---
+.vscode/
+.idea/
+*.swp
+
+
+.DS_Store
+Thumbs.db
+
+
+Dockerfile
+.dockerignore
+docker-compose.yml
