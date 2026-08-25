@@ -3,6 +3,7 @@ FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libpq-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,7 +22,7 @@ RUN uv sync --frozen
 
 ENV PATH="/app/.venv/bin:$PATH"
 
-RUN chmod +x entrypoint.sh
+RUN sed -i 's/\r$//' entrypoint.sh && chmod +x entrypoint.sh
 
 EXPOSE 8000
 
