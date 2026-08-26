@@ -2,9 +2,8 @@
 
 set -e
 
-# Monkey-patch gevent BEFORE importing Django or any database modules
-export GEVENT_RESOLVER=ares
-python -c "from gevent import monkey; monkey.patch_all()"
+# Activate virtual environment
+. /app/.venv/bin/activate
 
 echo "==> Running migrations..."
 python manage.py migrate --noinput
