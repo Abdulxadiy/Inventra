@@ -2,12 +2,12 @@
 
 set -e
 
+# Monkey-patch gevent BEFORE importing Django or any database modules
+export GEVENT_RESOLVER=ares
+python -c "from gevent import monkey; monkey.patch_all()"
+
 echo "==> Running migrations..."
 python manage.py migrate --noinput
-
-echo "==> Static files collecting..."
-
-python manage.py collectstatic --noinput --clear || true
 
 echo "==> Preparations completed. Main process starting..."
 

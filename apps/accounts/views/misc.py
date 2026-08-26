@@ -22,8 +22,8 @@ def get_telegram_contact_or_error(phone_number):
         contact = TelegramContact.objects.get(phone_number=phone_number)
     except TelegramContact.DoesNotExist:
         return None, Response(
-            {'error': 'telegram_not_linked'},
-            status=status.HTTP_400_BAD_REQUEST,
+            {'error': 'telegram_contact_not_found'},
+            status=status.HTTP_404_NOT_FOUND,
         )
 
     if otp_services.is_in_cooldown(phone_number):
