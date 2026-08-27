@@ -1,28 +1,25 @@
 ﻿from rest_framework import status
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
-from apps.accounts.serializers import PhoneNumberSerializer, VerifyOTPSerializer
 from rest_framework.views import APIView
+from apps.accounts.models import User
+from api.v1.accounts.serializers import PhoneNumberSerializer, VerifyOTPSerializer
 from apps.accounts.services import otp_services
-from apps.accounts.views.misc import get_telegram_contact_or_error, send_otp_or_error, issue_tokens
-
-User = get_user_model()
+from api.v1.accounts.views.misc import get_telegram_contact_or_error, send_otp_or_error, issue_tokens
 
 
-class LoginRequestOTPView(APIView):
+class RegisterRequestOTPView(APIView):
     def post(self, request):
         serializer = PhoneNumberSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone_number = serializer.validated_data['phone_number']
 
-        if not User.objects.filter(phone_number=phone_number).exists():
+        if User.objects.filter(phone_number=phone_number).exists():
             return Response(
-                {'error': 'user_not_found'},
-                status=status.HTTP_404_NOT_FOUND
+                {'error': 'user_already_exists.'},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         contact, error_reason = get_telegram_contact_or_error(phone_number)
-
         if error_reason:
             return error_reason
 
@@ -33,7 +30,7 @@ class LoginRequestOTPView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class LoginVerifyOTPView(APIView):
+class RegisterVerifyOTPView(APIView):
     def post(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -41,17 +38,27 @@ class LoginVerifyOTPView(APIView):
         phone_number = serializer.validated_data['phone_number']
         code = serializer.validated_data['verification_code']
 
-        is_valid, error_reason = otp_services.verify_code(phone_number, code)
-        if not is_valid:
-            return Response({'error': error_reason}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(phone_number=phone_number).exists():
+            return Response(
+                {'error': 'user_already_exists.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        try:
-            user = User.objects.get(phone_number=phone_number)
-        except User.DoesNotExist:
-            return Response({'error': 'user_not_found'}, status=status.HTTP_404_NOT_FOUND)
+        is_valid, error_reasons = otp_services.verify_code(phone_number, code)
+        if not is_valid:
+            return Response({'error': error_reasons}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(
+            phone_number=phone_number,
+            role='customer',
+            is_phone_verified=True,
+        )
+
+        user.set_unusable_password()
+        user.save()
 
         tokens = issue_tokens(user)
         return Response({
             **tokens,
             'needs_profile_completion': not user.profile_completed,
-        }, status=status.HTTP_200_OK)
+        }, status=status.HTTP_201_CREATED)

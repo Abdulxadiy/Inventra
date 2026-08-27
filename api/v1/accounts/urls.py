@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (
+from api.v1.accounts.views import (
 RegisterRequestOTPView, RegisterVerifyOTPView, LoginRequestOTPView, LoginVerifyOTPView, CompleteProfileVIew)
 
 

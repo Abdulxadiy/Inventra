@@ -2,9 +2,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from apps.accounts.models import User
-from apps.accounts.serializers import CompleteProfileSerializer
+from api.v1.accounts.serializers import CompleteProfileSerializer
 
 
 class CompleteProfileVIew(APIView):
