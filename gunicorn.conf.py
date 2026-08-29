@@ -29,7 +29,7 @@ access_log_format = '%(h)s "%(r)s" %(s)s %(D)sus'
 
 loglevel = os.environ.get("GUNICORN_LOG_LEVEL", "info")
 
-preload_app = True
+preload_app = False  # gevent worker gives DatabaseError when True — checked, don't change
 
 # For gevent: use ares resolver instead of thread-based resolver
 if worker_class == "gevent":

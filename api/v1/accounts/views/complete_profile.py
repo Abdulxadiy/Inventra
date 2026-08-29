@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from api.v1.accounts.serializers import CompleteProfileSerializer
 
 
-class CompleteProfileVIew(APIView):
+class CompleteProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
