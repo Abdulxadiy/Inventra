@@ -1,9 +1,7 @@
 """Service layer for hiring and firing Employee records."""
 
-import secrets
 from django.db import transaction
 from django.utils import timezone
-
 from apps.accounts.models import User, Employee
 
 
@@ -37,7 +35,7 @@ class EmployeeService:
             return
         if (
             fired_by.role == "owner"
-            and employee.tenant_id == fired_by.tenant_id
+            and employee.tenant == fired_by.tenant
             and employee.user.role != "owner"
         ):
             return
