@@ -17,7 +17,7 @@ from .serializers import (
 )
 
 
-class TenantCreateView(generics.ListCreateAPIView):
+class TenantListCreateView(generics.ListCreateAPIView):
     """
     GET /api/v1/tenants/ -- list all tenants (platform_admin only).
     POST /api/v1/tenants/ -- create a new tenant with its owner (platform_admin only).
@@ -104,7 +104,7 @@ class TenantDeactivateView(APIView):
         return Response({"id": tenant.id, "is_active": tenant.is_active})
 
 
-class TenantActivate(APIView):
+class TenantActivateView(APIView):
     """POST /api/v1/tenants/{id}/activate/ — platform_admin (any) or owner (own)."""
 
     permission_classes = [IsTenantOwnerOrPlatformAdmin]
