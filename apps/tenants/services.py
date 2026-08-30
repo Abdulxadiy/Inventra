@@ -64,3 +64,51 @@ class TenantService:
         except EmployeeServiceError as exc:
             raise TenantServiceError(str(exc)) from exc
         return tenant
+
+    @staticmethod
+    @transaction.atomic
+    def change_owner(
+            *,
+            tenant: Tenant,
+            new_owner: User,
+            changed_by: User,
+    ) -> Tenant:
+        """
+        Replace a tenant's owner. Fires the current owner (demoting them to customer,
+        per the standard fire() flow) and hires the new owner.
+        Only platform_admin may call this.
+        :param tenant:
+        :param new_owner:
+        :param changed_by:
+        :return Tenant:
+        """
+        if changed_by.role != "platform_admin":
+            raise TenantServiceError("Only platform_admin may change tenant's owner.")
+        if new_owner.role == "platform_admin":
+            raise TenantServiceError("A platform_admin cannot be assigned as a tenant owner.")
+        if Tenant.objects.filter(owner=new_owner).exclude(pk=tenant.pk).exists():
+            raise TenantServiceError("This user already is the owner of another tenant.")
+
+        old_owner = tenant.owner
+        try:
+            EmployeeService.fire(
+                target_user=old_owner,
+                fired_by=changed_by,
+            )
+        except EmployeeServiceError as exc:
+            raise TenantServiceError(str(exc)) from exc
+
+        try:
+            EmployeeService.hire(
+                target_user=new_owner,
+                tenant=tenant,
+                hired_by=changed_by,
+                position="Owner",
+                role="owner",
+            )
+        except EmployeeServiceError as exc:
+            raise TenantServiceError(str(exc)) from exc
+
+        tenant.owner = new_owner
+        tenant.save(update_fields=["owner"])
+        return tenant
