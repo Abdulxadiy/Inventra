@@ -48,7 +48,8 @@ class TenantStaffSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class TenantChangeOwnerSerializer(serializers.ModelSerializer):
+class TenantChangeOwnerSerializer(serializers.Serializer):
     """Validates input for the change-owner endpoint."""
-
-    new_owner_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    new_owner_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='new_owner'
+    )

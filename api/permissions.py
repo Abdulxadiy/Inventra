@@ -54,6 +54,12 @@ class IsTenantMember(BasePermission):
     staff(own tenant only, read-only enforced in the view).
     """
 
+    def has_permission(self, request, view):
+        return bool(
+            request.user
+            and request.user.is_authenticated
+        )
+
     def has_object_permission(self, request, view, obj):
         user = request.user
         if user.role == 'platform_admin':
@@ -67,6 +73,12 @@ class IsTenantMember(BasePermission):
 
 class IsTenantOwnerOrPlatformAdmin(BasePermission):
     """Allows platform_admin(any tenant) or tenant's own owner."""
+
+    def has_permission(self, request, view):
+        return bool(
+            request.user
+            and request.user.is_authenticated
+        )
 
     def has_object_permission(self, request, view, obj):
         user = request.user

@@ -1,6 +1,7 @@
 """URL routes for the tenants API."""
 
 from django.urls import path
+from api.v1.accounts.views.employee_views import EmployeeHireView, EmployeeFireView
 from .views import (
     TenantListCreateView,
     TenantDetailView,

@@ -2,6 +2,7 @@
 
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -25,6 +26,7 @@ def _resolve_tenant_or_403(request, tenant_id):
 
 class EmployeeHireView(APIView):
     """POST /api/v1/tenants/{tenant_id}/employees/hire/"""
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, tenant_id):
         tenant, error = _resolve_tenant_or_403(request, tenant_id)
@@ -49,6 +51,7 @@ class EmployeeHireView(APIView):
 
 class EmployeeFireView(APIView):
     """POST /api/v1/tenants/{tenant_id}/employees/fire/"""
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, tenant_id):
         tenant, error = _resolve_tenant_or_403(request, tenant_id)
