@@ -1,5 +1,7 @@
 from rest_framework import serializers
+from apps.accounts.models.employee_model import Employee
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 
 User = get_user_model()
 
@@ -19,3 +21,33 @@ class CompleteProfileSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
     email = serializers.EmailField(required=False, allow_blank=True)
     date_of_birth = serializers.DateField(required=False, allow_null=True)
+
+
+class EmployeeHireSerializer(serializers.Serializer):
+    """Validates input for hiring a new staff member."""
+
+    target_user_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source="target_user"
+    )
+    position =serializers.CharField(required=False, allow_blank=True, default="")
+    permission_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Permission.objects.all(), many=True, required=False, source="permissions"
+    )
+    role = serializers.CharField(read_only=True, default="staff")
+
+
+class EmployeeFireSerializer(serializers.Serializer):
+    """Validates input for firing a staff member."""
+
+    target_user_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source="target_user"
+    )
+
+
+class EmployeeOutputSerializer(serializers.ModelSerializer):
+    """Represents an Employee record in API response."""
+
+    class Meta:
+        model = Employee
+        fields = ["id", "user", "tenant", "position", "is_active", "hired_at", "fired_at"]
+        read_only_fields = fields
