@@ -1,0 +1,39 @@
+# docker-compose.test.yml
+#
+# Isolated infrastructure for running the test suite. Runs on different
+# ports than your dev/production docker-compose.yml so both can run at
+# the same time without colliding.
+#
+# Usage:
+#   docker compose -f docker-compose.test.yml up -d
+#   uv run pytest
+#   docker compose -f docker-compose.test.yml down -v   # -v also drops the volumes
+
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: inventra_test
+      POSTGRES_USER: inventra_test
+      POSTGRES_PASSWORD: inventra_test
+    ports:
+      - "5433:5432"   # 5433 on the host -> avoids clashing with your dev Postgres on 5432
+    tmpfs:
+      - /var/lib/postgresql/data   # test DB doesn't need to survive a reboot -> faster, disposable
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inventra_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+  redis-test:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"   # 6380 on the host -> avoids clashing with your dev Redis on 6379
+    tmpfs:
+      - /data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
