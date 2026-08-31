@@ -28,8 +28,8 @@ def is_in_cooldown(phone_number: str) -> bool:
     return redis_client.exists(_cooldown_key(phone_number)) == 1
 
 def store_code(phone_number: str, code: str) -> None:
-    redis_client.setex(_otp_key(phone_number), OTP_TTL_SECONDS, code)
-    redis_client.setex(_cooldown_key(phone_number), COOLDOWN_SECONDS, '1')
+    redis_client.set(_otp_key(phone_number), code, ex=OTP_TTL_SECONDS)
+    redis_client.set(_cooldown_key(phone_number), '1', ex=COOLDOWN_SECONDS)
     redis_client.delete(_attempts_key(phone_number))
 
 def discard_code(phone_number: str) -> None:
