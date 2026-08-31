@@ -17,3 +17,11 @@ dependencies = [
     "redis>=8.1.0",
     "requests>=2.34.2",
 ]
+
+[dependency-groups]
+dev = [
+    "factory-boy>=3.3.3",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-django>=4.14.0",
+]
