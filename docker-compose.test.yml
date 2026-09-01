@@ -10,6 +10,10 @@
 #   docker compose -f docker-compose.test.yml down -v   # -v also drops the volumes
 
 services:
+  # A throwaway Postgres, completely separate from your dev/production
+  # database. config/settings_test.py points DATABASES at this container
+  # (via TEST_DB_* vars in .env.test), so pytest-django's test database
+  # gets created here — never on your real Postgres server.
   postgres-test:
     image: postgres:16-alpine
     environment:
@@ -17,19 +21,31 @@ services:
       POSTGRES_USER: inventra_test
       POSTGRES_PASSWORD: inventra_test
     ports:
-      - "5433:5432"   # 5433 on the host -> avoids clashing with your dev Postgres on 5432
+      # 5433 on the host -> avoids clashing with your dev Postgres on 5432,
+      # so both docker-compose.yml and this file can run simultaneously.
+      - "5433:5432"
     tmpfs:
-      - /var/lib/postgresql/data   # test DB doesn't need to survive a reboot -> faster, disposable
+      # Data lives in memory only, not on disk. Test data doesn't need to
+      # survive a reboot/restart, and this makes the container faster to
+      # start and the DB faster to write to during test runs.
+      - /var/lib/postgresql/data
     healthcheck:
+      # Lets `docker compose up -d --wait` (or any script polling this)
+      # know when Postgres is actually ready to accept connections,
+      # rather than just "the container process has started".
       test: ["CMD-SHELL", "pg_isready -U inventra_test"]
       interval: 2s
       timeout: 3s
       retries: 10
 
+  # A throwaway Redis, completely separate from your dev/production
+  # Redis (which handles real OTP codes) — otp_services.py tests write
+  # and flush this instance freely without any risk to real data.
   redis-test:
     image: redis:7-alpine
     ports:
-      - "6380:6379"   # 6380 on the host -> avoids clashing with your dev Redis on 6379
+      # 6380 on the host -> avoids clashing with your dev Redis on 6379.
+      - "6380:6379"
     tmpfs:
       - /data
     healthcheck:
