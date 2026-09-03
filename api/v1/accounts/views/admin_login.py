@@ -43,9 +43,9 @@ def _blocked(second_remining: int):
     return Response(
         {
             "detail": (
-                "Too many failed attempts from this device. Access to",
-                "this platform has been blocked. Contact the",
-                "administrator to restore access.",
+                "Too many failed attempts from this device. Access to"
+                "this platform has been blocked. Contact the"
+                "administrator to restore access."
             ),
             "retry_after_seconds": second_remining,
         },
@@ -110,7 +110,7 @@ class AdminLoginVerifyOTPView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = AdminLoginVerifyOTPSerializer
+        serializer = AdminLoginVerifyOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
         code = serializer.validated_data['verification_code']
