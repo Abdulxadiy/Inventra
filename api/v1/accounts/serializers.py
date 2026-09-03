@@ -51,3 +51,15 @@ class EmployeeOutputSerializer(serializers.ModelSerializer):
         model = Employee
         fields = ["id", "user", "tenant", "position", "is_active", "hired_at", "fired_at"]
         read_only_fields = fields
+
+
+class AdminLoginSerializer(serializers.Serializer):
+    """Step 1 of admin-login: username + password."""
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+
+class AdminLoginVerifyOTPSerializer(serializers.Serializer):
+    """Step 2 of admin-panel login: username+ the OTP code sent by step 1."""
+    username = serializers.CharField()
+    verification_code = serializers.CharField(max_length=6, min_length=6)
