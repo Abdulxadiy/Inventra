@@ -42,6 +42,7 @@ class EmployeeHireView(APIView):
                 tenant=tenant,
                 hired_by=request.user,
                 position=serializer.validated_data.get('position', ''),
+                permissions=serializer.validated_data.get('permissions'),
                 role="staff",
             )
         except EmployeeServiceError as exc:
