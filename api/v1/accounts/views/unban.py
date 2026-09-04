@@ -19,7 +19,7 @@ edge case is deliberately left to shell/DB access for now, same as
 platform_admin creation itself (createsuperuser-only, see roadmap
 "5. Ochiq dizayn" F).
 """
-from requests.packages import target
+from apps.accounts.services import customer_login_throttle
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -42,14 +42,12 @@ class UnbanView(APIView):
         target_user.is_active = True
         target_user.save(update_fields=["is_active"])
 
-        # login_throttle is keyed by username, so it only applies to
-        # staff/owner/platform_admin (customers never have a username).
-        # TODO: once a phone_number-keyed customer_login_throttle module
-        # exists (roadmap: customer throttle, separate module), also
-        # call its full-reset here using target_user.phone_number so this
-        # endpoint stays the single unban entrypoint for both audiences.
+        # customer_login_throttle is keyed by phone_number instead --
+        # every user has one, so this always runs. Harmless no-op for a
+        # staff/owner/platform_admin who was never throttled this way.
         if target_user.username:
             login_throttle.register_success(target_user.username)
+        customer_login_throttle.register_success(target_user.phone_number)
 
         return Response(
             {
