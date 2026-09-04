@@ -63,3 +63,13 @@ class AdminLoginVerifyOTPSerializer(serializers.Serializer):
     """Step 2 of admin-panel login: username+ the OTP code sent by step 1."""
     username = serializers.CharField()
     verification_code = serializers.CharField(max_length=6, min_length=6)
+
+
+class UnbanSerializer(serializers.Serializer):
+    """Validates input for restoring a permanently-banned user's access.
+        Uses target_user_id (not username) so this also works for customers,
+        who never have a username -- see UnbanView."""
+    target_user_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        source="target_user"
+    )

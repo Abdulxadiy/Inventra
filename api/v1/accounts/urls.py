@@ -6,7 +6,8 @@ from api.v1.accounts.views import (
     LoginVerifyOTPView,
     CompleteProfileView,
     AdminLoginView,
-    AdminLoginVerifyOTPView
+    AdminLoginVerifyOTPView,
+    UnbanView,
 )
 
 
@@ -17,6 +18,7 @@ urlpatterns = [
     path('auth/login/verify-otp/', LoginVerifyOTPView.as_view(), name='login-verify-otp'),
     path('auth/complete-profile/', CompleteProfileView.as_view(), name='complete-profile'),
     path('auth/admin-login/', AdminLoginView.as_view(), name='admin-login'),
-    path('auth/admin-login/verify-otp/', AdminLoginVerifyOTPView.as_view(), name='admin-login-verify-otp')
+    path('auth/admin-login/verify-otp/', AdminLoginVerifyOTPView.as_view(), name='admin-login-verify-otp'),
+    path('auth/unban/', UnbanView.as_view(), name='unban'),
 
 ]
